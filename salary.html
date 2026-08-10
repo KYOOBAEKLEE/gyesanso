@@ -61,7 +61,7 @@
     <button class="go" type="submit">계 산 하 기</button>
   </form>
 
-  <div class="receipt" id="r">
+  <div class="receipt" id="r" aria-live="polite">
     <div class="stamp-mark">계산<br>완료</div>
     <h2>급여 명세</h2>
     <div class="line"><span class="k">세전 월급</span><span class="v" id="o-grossM"></span></div>
@@ -95,6 +95,13 @@
     <h2>비과세액이란?</h2>
     <p>세금과 보험료를 매기지 않는 급여 항목입니다. 대표적으로 <strong>식대 월 20만원</strong>. 회사 급여명세서에 식대가 포함돼 있다면 그만큼 공제가 줄어 실수령액이 늘어납니다.</p>
   </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="table.html">2026 연봉 실수령액 표</a>
+    <a href="insurance.html">4대보험 계산기</a>
+    <a href="severance.html">퇴직금 계산기</a>
+  </nav>
 
   <footer>
     참고용 약식 계산입니다. 실제 원천징수는 국세청 간이세액표, 연말정산 결과에 따라 달라집니다.

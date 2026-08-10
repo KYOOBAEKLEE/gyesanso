@@ -69,7 +69,7 @@
     <button class="go" type="submit">계 산 하 기</button>
   </form>
 
-  <div class="receipt" id="r">
+  <div class="receipt" id="r" aria-live="polite">
     <div class="stamp-mark">계산<br>완료</div>
     <h2>상환 명세</h2>
     <div class="line"><span class="k">첫 달 상환액</span><span class="v" id="o-first"></span></div>
@@ -95,6 +95,13 @@
       <li>금리 0.1%p 차이도 30년이면 수백만원입니다. 갈아타기(대환)도 주기적으로 검토할 만합니다.</li>
     </ul>
   </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="jeonse.html">전월세 전환 계산기</a>
+    <a href="interest.html">예금·적금 이자 계산기</a>
+    <a href="table.html">2026 연봉 실수령액 표</a>
+  </nav>
 
   <footer>
     참고용 약식 계산입니다. 실제 상환액은 은행 상품 조건·금리 변동에 따라 달라집니다.

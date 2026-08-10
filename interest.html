@@ -76,7 +76,7 @@
     <button class="go" type="submit">계 산 하 기</button>
   </form>
 
-  <div class="receipt" id="r">
+  <div class="receipt" id="r" aria-live="polite">
     <div class="stamp-mark">계산<br>완료</div>
     <h2>이자 명세</h2>
     <div class="line"><span class="k">원금 합계</span><span class="v" id="o-principal"></span></div>
@@ -100,6 +100,13 @@
       <li>같은 금액이면 <strong>예금 이자가 적금의 약 2배</strong>입니다. 목돈을 굳이 적금에 쪼개 넣을 이유는 없습니다.</li>
     </ul>
   </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="loan.html">대출 상환 계산기</a>
+    <a href="jeonse.html">전월세 전환 계산기</a>
+    <a href="salary.html">연봉 실수령액 계산기</a>
+  </nav>
 
   <footer>
     참고용 약식 계산입니다. 실제 이자는 은행의 일할 계산·복리 주기에 따라 달라질 수 있습니다.

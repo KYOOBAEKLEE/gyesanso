@@ -51,7 +51,7 @@
     <button class="go" type="submit">계 산 하 기</button>
   </form>
 
-  <div class="receipt" id="r">
+  <div class="receipt" id="r" aria-live="polite">
     <div class="stamp-mark">계산<br>완료</div>
     <h2>전환 명세</h2>
     <div class="line"><span class="k">낮아지는 보증금</span><span class="v" id="o-diff"></span></div>
@@ -74,6 +74,13 @@
       <li>목돈을 예금 등으로 굴릴 수 있는 수익률이 전환율보다 높다면 월세도 검토할 만합니다. <a href="interest.html">예금 이자 계산기</a>로 비교해 보세요.</li>
     </ul>
   </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="loan.html">대출 상환 계산기</a>
+    <a href="interest.html">예금·적금 이자 계산기</a>
+    <a href="salary.html">연봉 실수령액 계산기</a>
+  </nav>
 
   <footer>
     참고용 계산입니다. 실제 계약 조건은 임대인과의 협의, 관련 법령에 따릅니다.

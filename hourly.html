@@ -56,7 +56,7 @@
     <button class="go" type="submit">계 산 하 기</button>
   </form>
 
-  <div class="receipt" id="r">
+  <div class="receipt" id="r" aria-live="polite">
     <div class="stamp-mark">계산<br>완료</div>
     <h2>급여 환산</h2>
     <div class="line"><span class="k">주휴 시간</span><span class="v" id="o-juhyuH"></span></div>
@@ -81,6 +81,13 @@
     <h2>세전과 실수령은 다릅니다</h2>
     <p>여기 나오는 월급은 세전입니다. 4대보험에 가입돼 있다면 <a href="salary.html">연봉 실수령액 계산기</a>로, 3.3% 사업소득 처리라면 월급의 3.3%를 빼면 실수령액입니다.</p>
   </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="salary.html">연봉 실수령액 계산기</a>
+    <a href="insurance.html">4대보험 계산기</a>
+    <a href="severance.html">퇴직금 계산기</a>
+  </nav>
 
   <footer>
     참고용 계산입니다. 실제 급여는 근로계약·개근 여부에 따라 달라집니다.
