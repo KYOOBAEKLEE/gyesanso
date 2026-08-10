@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시급 계산기 — 주휴수당 포함 월급 환산 (2026 최저시급) | 계산소</title>
+<meta name="description" content="시급 계산기. 2026년 최저시급 10,320원 기준, 주휴수당 포함 월급을 3초 만에 계산하세요. 알바 월급, 주휴수당 조건까지 쉽게 설명.">
+<meta property="og:title" content="시급 계산기 — 주휴수당 포함 월급 환산">
+<meta property="og:description" content="시급과 주 근무시간만 넣으면 주휴수당 포함 월급이 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"2026년 최저시급은 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"시간당 10,320원입니다. 주 40시간 근무 시 주휴수당을 포함해 월 2,156,880원(209시간 기준)입니다."}},
+ {"@type":"Question","name":"주휴수당은 누가 받을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"일주일에 15시간 이상 일하고 정해진 근무일을 개근하면 받을 수 있습니다. 알바·계약직도 조건을 채우면 법적으로 받아야 합니다."}},
+ {"@type":"Question","name":"주휴수당은 어떻게 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"주 40시간 이상 일하면 하루치(8시간) 시급, 40시간 미만이면 (주 근로시간 ÷ 40) × 8시간분의 시급을 추가로 받습니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>시급 계산기</h1>
+  <p class="lead">시급과 주 근무시간만 넣으면 <strong>주휴수당 포함 월급</strong>이 나옵니다. 2026년 최저시급 10,320원.</p>
+
+  <form class="calc" id="f">
+    <div class="field">
+      <label for="hourly">시급 <span class="hint">(원)</span></label>
+      <input id="hourly" inputmode="numeric" value="10,320" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-v="10320">2026 최저시급</button>
+        <button type="button" data-v="11000">1.1만</button>
+        <button type="button" data-v="12000">1.2만</button>
+        <button type="button" data-v="15000">1.5만</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="hours">주 근무시간 <span class="hint">시간</span></label>
+        <input id="hours" inputmode="numeric" value="40" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="juhyu">주휴수당</label>
+        <select id="juhyu">
+          <option value="1">포함 (개근 기준)</option>
+          <option value="0">제외</option>
+        </select>
+      </div>
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>급여 환산</h2>
+    <div class="line"><span class="k">주휴 시간</span><span class="v" id="o-juhyuH"></span></div>
+    <div class="line"><span class="k">주휴수당 (주당)</span><span class="v" id="o-juhyuP"></span></div>
+    <div class="line"><span class="k">주급</span><span class="v" id="o-weekly"></span></div>
+    <div class="line"><span class="k">월 환산 시간</span><span class="v" id="o-hours"></span></div>
+    <div class="sep"></div>
+    <div class="total"><span class="k">월급 (세전)</span><span class="v" id="o-monthly"></span></div>
+    <div class="line"><span class="k">연 환산</span><span class="v" id="o-yearly"></span></div>
+    <div class="foot" id="o-note">세전 금액 · 4대보험 가입 시 공제 후 지급</div>
+  </div>
+
+  <section class="explain">
+    <h2>주휴수당이 뭔가요?</h2>
+    <p>일주일 개근하면 <strong>일하지 않는 하루도 유급</strong>으로 쳐주는 수당입니다. 조건은 두 가지: <strong>주 15시간 이상</strong> 근무 + 정해진 근무일 <strong>개근</strong>. 알바도 조건만 채우면 법적으로 받아야 합니다. 안 주면 임금체불이라 고용노동부에 진정할 수 있습니다.</p>
+    <h2>계산 방식</h2>
+    <ul>
+      <li>주 40시간 이상: 하루치(8시간) 시급이 주휴수당.</li>
+      <li>주 40시간 미만: (주 근로시간 ÷ 40) × 8시간분. 예: 주 20시간 알바 → 4시간분.</li>
+      <li>월급 환산은 한 달 평균 4.345주 기준입니다. 주 40시간이면 주휴 포함 <strong>월 209시간</strong> — 고용노동부 공식 기준과 같습니다.</li>
+    </ul>
+    <h2>세전과 실수령은 다릅니다</h2>
+    <p>여기 나오는 월급은 세전입니다. 4대보험에 가입돼 있다면 <a href="salary.html">연봉 실수령액 계산기</a>로, 3.3% 사업소득 처리라면 월급의 3.3%를 빼면 실수령액입니다.</p>
+  </section>
+
+  <footer>
+    참고용 계산입니다. 실제 급여는 근로계약·개근 여부에 따라 달라집니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+const hEl = document.getElementById('hourly');
+hEl.addEventListener('input', () => {
+  const v = num(hEl.value); hEl.value = v ? v.toLocaleString('ko-KR') : '';
+});
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  hEl.value = (+b.dataset.v).toLocaleString('ko-KR');
+  document.getElementById('f').requestSubmit();
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const hourly = num(hEl.value);
+  const weeklyHours = num(document.getElementById('hours').value);
+  if (!hourly || !weeklyHours) return;
+  const withJuhyu = document.getElementById('juhyu').value === '1';
+  const r = hourlyToMonthly({ hourly, weeklyHours, withJuhyu });
+  document.getElementById('o-juhyuH').textContent = r.juhyuHours ? r.juhyuHours + '시간' : '해당 없음';
+  document.getElementById('o-juhyuP').textContent = fmt(r.juhyuWeekly);
+  document.getElementById('o-weekly').textContent = fmt(r.weekly);
+  document.getElementById('o-hours').textContent = r.monthlyHours + '시간';
+  document.getElementById('o-monthly').textContent = fmt(r.monthly);
+  document.getElementById('o-yearly').textContent = fmt(r.yearly);
+  document.getElementById('o-note').textContent = withJuhyu && !r.juhyuHours
+    ? '주 15시간 미만은 주휴수당 대상이 아닙니다'
+    : '세전 금액 · 4대보험 가입 시 공제 후 지급';
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

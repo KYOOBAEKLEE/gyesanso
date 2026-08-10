@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -75,5 +75,20 @@ assert.ok(lb.totalInterest > lp.totalInterest && lp.totalInterest > lpr.totalInt
 
 // 금리 0% 나눗셈 가드
 assert.strictEqual(loanPayment({ principal: 12000000, annualRate: 0, months: 12 }).firstMonthly, 1000000);
+
+// 시급: 최저시급 주40시간 → 월 209시간 = 2,156,880원 (고용노동부 공식 환산과 일치)
+const h = hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 40 });
+assert.strictEqual(h.monthlyHours, 209);
+assert.strictEqual(h.monthly, MIN_WAGE * 209);
+assert.strictEqual(h.juhyuHours, 8);
+
+// 주 15시간 미만은 주휴수당 없음
+assert.strictEqual(hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 14 }).juhyuHours, 0);
+
+// 주 20시간 → 주휴 4시간 (비례)
+assert.strictEqual(hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 20 }).juhyuHours, 4);
+
+// 주휴 제외 옵션이 포함보다 적다
+assert.ok(hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 40, withJuhyu: false }).monthly < h.monthly);
 
 console.log('OK — 전체 테스트 통과');

@@ -136,9 +136,23 @@ function loanPayment({ principal, annualRate, months, type = 'equal-payment' }) 
            totalInterest: monthly * months - principal, totalPaid: monthly * months };
 }
 
+const MIN_WAGE = 10320; // 2026년 최저시급
+
+// 시급 → 월급. 주휴수당: 주 15시간 이상 개근 시 (주근로/40, 최대 1)×8시간 유급
+// 월 환산: 주수 4.345(=365/7/12), 주40h+주휴8h → 209시간 (고용부 기준과 일치)
+function hourlyToMonthly({ hourly, weeklyHours, withJuhyu = true }) {
+  const juhyuHours = withJuhyu && weeklyHours >= 15 ? Math.min(weeklyHours / 40, 1) * 8 : 0;
+  const monthlyHours = Math.round((weeklyHours + juhyuHours) * 4.345);
+  const monthly = hourly * monthlyHours;
+  return { juhyuHours, juhyuWeekly: Math.round(hourly * juhyuHours),
+           weekly: Math.round(hourly * (weeklyHours + juhyuHours)),
+           monthlyHours, monthly, yearly: monthly * 12 };
+}
+
 function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
-                     depositInterest, savingsInterest, jeonseToMonthly, loanPayment };
+                     depositInterest, savingsInterest, jeonseToMonthly, loanPayment,
+                     hourlyToMonthly, MIN_WAGE };
 }
