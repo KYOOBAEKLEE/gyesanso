@@ -6,14 +6,14 @@
 ## 완료
 - [x] 반복 1: calc.js(실수령액/퇴직금, 2026 요율) + test.js, index/salary/severance 페이지, DEPLOY.md, git 초기화
 - [x] 반복 2: 예·적금 이자 계산기(interest.html, 단리/월복리/비과세), 전월세 전환 계산기(jeonse.html), index 카드 4개로, 테스트 추가 통과
+- [x] 반복 3: 2026 연봉 실수령액 표(table.html, gen-table.js로 생성 — 요율 변경 시 재실행), sitemap.xml/robots.txt(REPLACE-DOMAIN placeholder), salary↔table 내부링크
 
 ## 백로그 (다음 반복에서 위에서부터 하나씩)
-1. 연봉 구간별 실수령액 표 페이지 (table.html) — "연봉 실수령액 표 2026" 키워드용. calc.js를 빌드 스크립트로 돌려 정적 표 생성, index "준비중" 해제
-2. sitemap.xml / robots.txt 작성 (도메인 placeholder → 사용자가 도메인 알려주면 교체)
-3. 대출 상환 계산기 (원리금균등/원금균등)
-4. 4대보험 계산기 단독 페이지
-5. 각 페이지 상호 내부링크 강화, 접근성 점검 (label/aria)
-6. 사용자가 도메인/애드센스 코드 주면: canonical, 애드센스 태그, sitemap 실주소 반영
+1. 대출 상환 계산기 (loan.html) — 원리금균등/원금균등, 총이자 비교. index에 카드 추가
+2. 4대보험 계산기 단독 페이지 (insurance.html) — "4대보험 계산기" 키워드
+3. 각 페이지 상호 내부링크 강화(관련 계산기 푸터 링크), 접근성 점검 (label/aria)
+4. 시급→월급 계산기 (최저시급 키워드, 검색량 큼)
+5. 사용자가 도메인/애드센스 코드 주면: canonical, 애드센스 태그, sitemap/robots 실주소 반영 (REPLACE-DOMAIN 치환)
 
 ## 규칙 (다음 반복의 나에게)
 - 반복당 백로그 1~2개만. 완료하면 이 파일 갱신 + git commit

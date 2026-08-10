@@ -19,6 +19,10 @@
 - 가비아/후이즈에서 구입 → GitHub Pages 설정에서 Custom domain 입력
 - 도메인 확정되면 저에게 알려주세요 → sitemap.xml 주소를 교체해 드립니다
 
+## 2.5. 주소 확정되면 알려주기
+- 배포 주소(예: `mano.github.io/gyesanso` 또는 자체 도메인)를 저에게 알려주세요
+- `sitemap.xml`과 `robots.txt`의 `REPLACE-DOMAIN`을 실제 주소로 교체해 드립니다 (검색 등록 전에 필요)
+
 ## 3. 검색 등록 (20분) — 트래픽의 핵심
 한국 트래픽은 네이버가 절반 이상입니다. 둘 다 등록하세요.
 - **네이버 서치어드바이저** (searchadvisor.naver.com): 사이트 등록 → 소유 확인(HTML 태그 방식 — 태그 값 알려주시면 제가 넣어드립니다) → sitemap.xml 제출

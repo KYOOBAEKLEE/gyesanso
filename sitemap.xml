@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 배포 후 REPLACE-DOMAIN을 실제 주소로 교체 (예: mano.github.io/gyesanso) — DEPLOY.md 참고 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://REPLACE-DOMAIN/</loc></url>
+  <url><loc>https://REPLACE-DOMAIN/salary.html</loc></url>
+  <url><loc>https://REPLACE-DOMAIN/table.html</loc></url>
+  <url><loc>https://REPLACE-DOMAIN/severance.html</loc></url>
+  <url><loc>https://REPLACE-DOMAIN/interest.html</loc></url>
+  <url><loc>https://REPLACE-DOMAIN/jeonse.html</loc></url>
+</urlset>
