@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -108,5 +108,18 @@ assert.strictEqual(fi.worker.health, ns.health);
 
 // 비과세보다 적은 월급 → 0원, 음수 없음
 assert.strictEqual(fourInsurance({ monthly: 100000 }).worker.total, 0);
+
+// 연차: 1~2년차 15일, 3년차 16일, 5년차 17일, 21년 이상 25일 상한, 1년 미만 null
+assert.strictEqual(annualLeaveDays(1), 15);
+assert.strictEqual(annualLeaveDays(2), 15);
+assert.strictEqual(annualLeaveDays(3), 16);
+assert.strictEqual(annualLeaveDays(5), 17);
+assert.strictEqual(annualLeaveDays(30), 25);
+assert.strictEqual(annualLeaveDays(0.5), null);
+
+// 연차수당: 월 300만, 미사용 5일 → 1일 통상임금 약 11.5만, 합계 = 일급×5
+const al = annualLeavePayCalc({ monthlySalary: 3000000, unusedDays: 5 });
+assert.ok(al.daily > 110000 && al.daily < 120000, `일 통상임금 이상: ${al.daily}`);
+assert.strictEqual(al.total, al.daily * 5);
 
 console.log('OK — 전체 테스트 통과');

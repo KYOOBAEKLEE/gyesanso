@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연차 계산기 — 발생 연차와 미사용 연차수당 | 계산소</title>
+<meta name="description" content="연차 계산기. 입사일로 올해 발생 연차 일수를 확인하고, 미사용 연차수당까지 3초 만에 계산하세요. 근로기준법 기준.">
+<meta property="og:title" content="연차 계산기 — 발생 연차·연차수당">
+<meta property="og:description" content="입사일 넣으면 내 연차가 며칠인지, 안 쓰면 얼마 받는지 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"연차는 몇 개 생기나요?","acceptedAnswer":{"@type":"Answer","text":"1년 이상 근무하고 출근율 80% 이상이면 15일, 3년차부터 2년마다 1일씩 늘어 최대 25일입니다. 1년 미만은 한 달 개근마다 1일씩 최대 11일이 생깁니다."}},
+ {"@type":"Question","name":"안 쓴 연차는 어떻게 되나요?","acceptedAnswer":{"@type":"Answer","text":"회사가 연차 사용을 촉진하지 않았다면 미사용 연차는 수당으로 보상받아야 합니다. 1일 통상임금 × 미사용 일수입니다."}},
+ {"@type":"Question","name":"연차수당은 어떻게 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"1일 통상임금은 대략 월급 ÷ 209시간 × 8시간입니다. 월급 300만원이면 하루 약 11만 5천원, 미사용 5일이면 약 57만원입니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>연차 계산기</h1>
+  <p class="lead">입사일을 넣으면 <strong>올해 발생 연차</strong>가, 월급과 미사용 일수를 넣으면 <strong>연차수당</strong>이 나옵니다.</p>
+
+  <form class="calc" id="f">
+    <div class="row2">
+      <div class="field">
+        <label for="start">입사일</label>
+        <input id="start" type="date" required>
+      </div>
+      <div class="field">
+        <label for="salary">월급 <span class="hint">세전 (원)</span></label>
+        <input id="salary" inputmode="numeric" placeholder="3,000,000" autocomplete="off">
+      </div>
+    </div>
+    <div class="field">
+      <label for="unused">미사용 연차 <span class="hint">일수 · 수당만 궁금하면 이것만</span></label>
+      <input id="unused" inputmode="numeric" placeholder="0" autocomplete="off">
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r" aria-live="polite">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>연차 명세</h2>
+    <div class="line"><span class="k">근속 연수</span><span class="v" id="o-years"></span></div>
+    <div class="line"><span class="k">올해 발생 연차</span><span class="v" id="o-days"></span></div>
+    <div class="sep"></div>
+    <div class="line"><span class="k">1일 통상임금</span><span class="v" id="o-daily"></span></div>
+    <div class="line"><span class="k">미사용 연차</span><span class="v" id="o-unused"></span></div>
+    <div class="total"><span class="k">연차수당</span><span class="v" id="o-total"></span></div>
+    <div class="foot" id="o-note">약식 계산 · 통상임금에 고정수당이 있으면 더 커질 수 있음</div>
+  </div>
+
+  <section class="explain">
+    <h2>연차, 몇 개 생기나요?</h2>
+    <ul>
+      <li><strong>1년 미만</strong> — 한 달 개근할 때마다 1일씩, 최대 11일.</li>
+      <li><strong>1년 이상</strong> (출근율 80% 이상) — 15일.</li>
+      <li><strong>3년차부터</strong> — 2년마다 1일씩 추가. 3년차 16일, 5년차 17일… 최대 <strong>25일</strong>.</li>
+    </ul>
+    <h2>안 쓴 연차는 돈으로 받습니다</h2>
+    <p>연차는 발생 후 1년 안에 써야 하고, 못 쓴 연차는 <strong>연차수당</strong>으로 보상받는 게 원칙입니다. 예외는 회사가 법에 따라 "연차 쓰세요"라고 서면으로 두 번 촉진(연차사용촉진제도)한 경우 — 이때는 수당 의무가 없어집니다. 촉진 공지를 받은 적이 없다면 수당을 청구할 수 있습니다.</p>
+    <h2>통상임금이란?</h2>
+    <p>연차수당의 기준이 되는 "정기적으로 고정해서 받는 임금"입니다. 기본급 외에 매달 고정으로 받는 수당(직책수당 등)도 포함되므로, 이 계산기의 결과(기본 월급 기준)보다 실제 수당이 클 수 있습니다. 퇴직할 때 남은 연차도 수당으로 정산됩니다 — <a href="severance.html">퇴직금 계산기</a>와 함께 확인해 보세요.</p>
+  </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="severance.html">퇴직금 계산기</a>
+    <a href="salary.html">연봉 실수령액 계산기</a>
+    <a href="hourly.html">시급 계산기</a>
+  </nav>
+
+  <footer>
+    참고용 약식 계산입니다. 실제 연차·수당은 취업규칙, 회계연도 기준 운영, 통상임금 범위에 따라 달라집니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+for (const id of ['salary', 'unused']) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    const v = num(el.value); el.value = v ? v.toLocaleString('ko-KR') : '';
+  });
+}
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const start = document.getElementById('start').value;
+  const salary = num(document.getElementById('salary').value);
+  const unused = num(document.getElementById('unused').value);
+  const el = id => document.getElementById('o-' + id);
+  const years = start ? (Date.now() - new Date(start)) / 86400000 / 365 : null;
+  if (years !== null) {
+    const d = annualLeaveDays(years);
+    el('years').textContent = years < 1 ? Math.floor(years * 12) + '개월' : Math.floor(years) + '년';
+    el('days').textContent = d === null ? '월 개근당 1일 (최대 11일)' : d + '일';
+  } else {
+    el('years').textContent = '—'; el('days').textContent = '—';
+  }
+  if (salary) {
+    const p = annualLeavePayCalc({ monthlySalary: salary, unusedDays: unused });
+    el('daily').textContent = fmt(p.daily);
+    el('unused').textContent = unused + '일';
+    el('total').textContent = fmt(p.total);
+  } else {
+    el('daily').textContent = '—'; el('unused').textContent = '—'; el('total').textContent = '월급을 입력하세요';
+  }
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

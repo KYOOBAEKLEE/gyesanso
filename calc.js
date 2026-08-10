@@ -150,6 +150,19 @@ function fourInsurance({ monthly, nonTaxable = 200000 }) {
   return { base, worker, employer };
 }
 
+// 연차 발생 일수 (근로기준법 60조, 출근율 80% 이상 가정)
+// 1년 미만은 월 개근당 1일(최대 11일)이라 null 반환 — 페이지에서 별도 안내
+function annualLeaveDays(yearsOfService) {
+  if (yearsOfService < 1) return null;
+  return Math.min(25, 15 + Math.floor((yearsOfService - 1) / 2));
+}
+
+// 미사용 연차수당 = 1일 통상임금(월급/209×8, 주40 기준) × 미사용 일수
+function annualLeavePayCalc({ monthlySalary, unusedDays }) {
+  const daily = Math.round(monthlySalary / 209 * 8);
+  return { daily, total: daily * unusedDays };
+}
+
 const MIN_WAGE = 10320; // 2026년 최저시급
 
 // 시급 → 월급. 주휴수당: 주 15시간 이상 개근 시 (주근로/40, 최대 1)×8시간 유급
@@ -168,5 +181,5 @@ function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
                      depositInterest, savingsInterest, jeonseToMonthly, loanPayment,
-                     hourlyToMonthly, MIN_WAGE, fourInsurance };
+                     hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc };
 }
