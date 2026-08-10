@@ -86,8 +86,37 @@ function severance(opts) {
   return { eligible: true, days, avgDaily: Math.round(avgDaily), pay };
 }
 
+// 이자소득세 15.4% (소득세 14% + 지방소득세 1.4%)
+const TAX_INTEREST = 0.154;
+
+// 예금(목돈 예치) 이자. compound=true면 월복리
+function depositInterest({ principal, annualRate, months, compound = false, taxFree = false }) {
+  const interest = Math.round(compound
+    ? principal * (Math.pow(1 + annualRate / 12, months) - 1)
+    : principal * annualRate * months / 12);
+  const tax = taxFree ? 0 : Math.round(interest * TAX_INTEREST);
+  return { interest, tax, net: interest - tax, total: principal + interest - tax };
+}
+
+// 적금(매월 납입) 이자 — 국내 은행 관행대로 단리
+function savingsInterest({ monthly, annualRate, months, taxFree = false }) {
+  const interest = Math.round(monthly * annualRate / 12 * months * (months + 1) / 2);
+  const tax = taxFree ? 0 : Math.round(interest * TAX_INTEREST);
+  const principal = monthly * months;
+  return { principal, interest, tax, net: interest - tax, total: principal + interest - tax };
+}
+
+// 전월세 전환: 낮추는 보증금 차액 × 전환율 ÷ 12 = 월세
+function jeonseToMonthly({ jeonse, deposit, ratePct }) {
+  const diff = jeonse - deposit;
+  if (diff <= 0) return { diff, monthly: 0, yearly: 0 };
+  const monthly = Math.round(diff * (ratePct / 100) / 12);
+  return { diff, monthly, yearly: monthly * 12 };
+}
+
 function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 
 if (typeof module !== 'undefined') {
-  module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap };
+  module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
+                     depositInterest, savingsInterest, jeonseToMonthly };
 }

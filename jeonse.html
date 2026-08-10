@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전월세 전환 계산기 — 보증금을 월세로 바꾸면 얼마? | 계산소</title>
+<meta name="description" content="전월세 전환 계산기. 전세 보증금을 낮추면 월세가 얼마 되는지, 법정 전환율 기준으로 3초 만에 계산하세요.">
+<meta property="og:title" content="전월세 전환 계산기">
+<meta property="og:description" content="보증금 ↔ 월세, 법정 전환율로 바로 계산.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"전월세 전환율이 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"보증금을 월세로 바꿀 때 적용하는 연 이율입니다. 법정 상한은 한국은행 기준금리 + 2%포인트로, 이를 넘는 전환은 임차인에게 불리해 법으로 제한됩니다."}},
+ {"@type":"Question","name":"보증금 1억을 월세로 바꾸면 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"전환율 5% 기준으로 1억원 × 5% ÷ 12개월 = 월 약 41만 7천원입니다."}},
+ {"@type":"Question","name":"집주인이 법정 전환율보다 높게 요구하면요?","acceptedAnswer":{"@type":"Answer","text":"기존 계약을 갱신하면서 전세를 월세로 돌리는 경우, 법정 전환율을 초과한 부분은 무효이며 이미 냈다면 반환을 청구할 수 있습니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>전월세 전환 계산기</h1>
+  <p class="lead">보증금을 낮추는 대신 월세를 낸다면 얼마가 적정한지, <strong>법정 전환율</strong> 기준으로 계산합니다.</p>
+
+  <form class="calc" id="f">
+    <div class="field">
+      <label for="jeonse">현재 전세 보증금 <span class="hint">(원)</span></label>
+      <input id="jeonse" inputmode="numeric" placeholder="300,000,000" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-t="jeonse" data-v="100000000">1억</button>
+        <button type="button" data-t="jeonse" data-v="200000000">2억</button>
+        <button type="button" data-t="jeonse" data-v="300000000">3억</button>
+        <button type="button" data-t="jeonse" data-v="500000000">5억</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="deposit">바꾼 뒤 보증금 <span class="hint">(원)</span></label>
+      <input id="deposit" inputmode="numeric" placeholder="100,000,000" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="rate">전환율 <span class="hint">% · 법정 상한 = 기준금리 + 2%p</span></label>
+      <input id="rate" inputmode="decimal" value="4.5" autocomplete="off">
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>전환 명세</h2>
+    <div class="line"><span class="k">낮아지는 보증금</span><span class="v" id="o-diff"></span></div>
+    <div class="line"><span class="k">적용 전환율</span><span class="v" id="o-rate"></span></div>
+    <div class="sep"></div>
+    <div class="total"><span class="k">적정 월세</span><span class="v" id="o-monthly"></span></div>
+    <div class="line"><span class="k">연간 월세 부담</span><span class="v" id="o-yearly"></span></div>
+    <div class="foot">계약 갱신 시 법정 전환율 초과분은 무효 · 신규 계약은 협의 사항</div>
+  </div>
+
+  <section class="explain">
+    <h2>전월세 전환율이란?</h2>
+    <p>보증금(목돈)을 월세로 바꿀 때 쓰는 <strong>연 이율</strong>입니다. 예를 들어 전환율 5%로 보증금 1억을 월세로 돌리면, 1억 × 5% = 연 500만원, 즉 <strong>월 약 41만 7천원</strong>이 됩니다.</p>
+    <h2>법정 상한이 있습니다</h2>
+    <p>주택임대차보호법상 전환율 상한은 <strong>한국은행 기준금리 + 2%포인트</strong>입니다. 계약을 갱신하며 전세를 월세로 돌릴 때 이보다 높게 받는 건 무효입니다. 계산 전에 현재 기준금리를 확인하고 전환율 칸에 넣으세요. 다만 <strong>신규 계약</strong>은 상한 적용 대상이 아니라 협의로 정합니다.</p>
+    <h2>전세 vs 월세, 뭐가 유리한가요?</h2>
+    <ul>
+      <li>내 돈으로 보증금을 채울 수 있다면 → 보통 <strong>전세가 유리</strong>. 월세로 나가는 돈이 없습니다.</li>
+      <li>보증금을 대출로 채워야 한다면 → <strong>전세대출 금리와 전환율을 비교</strong>하세요. 대출 금리가 전환율보다 낮으면 전세, 높으면 월세가 유리합니다.</li>
+      <li>목돈을 예금 등으로 굴릴 수 있는 수익률이 전환율보다 높다면 월세도 검토할 만합니다. <a href="interest.html">예금 이자 계산기</a>로 비교해 보세요.</li>
+    </ul>
+  </section>
+
+  <footer>
+    참고용 계산입니다. 실제 계약 조건은 임대인과의 협의, 관련 법령에 따릅니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+for (const id of ['jeonse', 'deposit']) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    const v = num(el.value); el.value = v ? v.toLocaleString('ko-KR') : '';
+  });
+}
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  document.getElementById(b.dataset.t).value = (+b.dataset.v).toLocaleString('ko-KR');
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const jeonse = num(document.getElementById('jeonse').value);
+  const deposit = num(document.getElementById('deposit').value);
+  const ratePct = parseFloat(document.getElementById('rate').value) || 0;
+  if (!jeonse) return;
+  const r = jeonseToMonthly({ jeonse, deposit, ratePct });
+  document.getElementById('o-diff').textContent = fmt(Math.max(0, r.diff));
+  document.getElementById('o-rate').textContent = ratePct + '%';
+  document.getElementById('o-monthly').textContent = fmt(r.monthly);
+  document.getElementById('o-yearly').textContent = fmt(r.yearly);
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -35,5 +35,29 @@ assert.ok(s.eligible && s.pay > 2800000 && s.pay < 3100000, `1년 퇴직금 이�
 // 상여 있으면 퇴직금 증가
 const sb = severance({ monthlySalary: 3000000, startDate: '2025-01-01', endDate: '2026-01-01', annualBonus: 6000000 });
 assert.ok(sb.pay > s.pay, '상여 미반영');
+
+// 예금: 1000만, 연 3%, 12개월 단리 → 이자 30만, 세후 253,800
+const d = depositInterest({ principal: 10000000, annualRate: 0.03, months: 12 });
+assert.strictEqual(d.interest, 300000);
+assert.strictEqual(d.net, 253800);
+
+// 월복리 > 단리
+assert.ok(depositInterest({ principal: 10000000, annualRate: 0.03, months: 12, compound: true }).interest > 300000);
+
+// 비과세면 세금 0
+assert.strictEqual(depositInterest({ principal: 10000000, annualRate: 0.03, months: 12, taxFree: true }).tax, 0);
+
+// 적금: 월 100만, 연 3%, 12개월 단리 → 이자 195,000, 세후 164,970
+const sv = savingsInterest({ monthly: 1000000, annualRate: 0.03, months: 12 });
+assert.strictEqual(sv.interest, 195000);
+assert.strictEqual(sv.net, 164970);
+assert.strictEqual(sv.principal, 12000000);
+
+// 전월세: 전세 3억 → 보증금 1억, 전환율 5% → 월세 833,333
+const j = jeonseToMonthly({ jeonse: 300000000, deposit: 100000000, ratePct: 5 });
+assert.strictEqual(j.monthly, 833333);
+
+// 보증금이 전세금보다 크면 월세 0 (음수 방지)
+assert.strictEqual(jeonseToMonthly({ jeonse: 100000000, deposit: 200000000, ratePct: 5 }).monthly, 0);
 
 console.log('OK — 전체 테스트 통과');

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>예금·적금 이자 계산기 — 세후 이자까지 | 계산소</title>
+<meta name="description" content="예금·적금 이자 계산기. 단리·월복리, 이자소득세 15.4%를 뺀 세후 실수령 이자를 3초 만에 확인하세요.">
+<meta property="og:title" content="예금·적금 이자 계산기 — 세후 이자까지">
+<meta property="og:description" content="금리 넣으면 세금 뗀 진짜 이자가 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"이자에서 세금을 얼마나 떼나요?","acceptedAnswer":{"@type":"Answer","text":"이자소득세 15.4%(소득세 14% + 지방소득세 1.4%)를 원천징수합니다. 예를 들어 이자가 10만원이면 실제로는 84,600원을 받습니다."}},
+ {"@type":"Question","name":"예금과 적금의 차이는 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"예금은 목돈을 한 번에 맡기는 것, 적금은 매달 일정액을 넣는 것입니다. 같은 금리라도 적금은 매달 넣은 돈만 이자가 붙어 총이자가 예금의 절반 정도입니다."}},
+ {"@type":"Question","name":"적금 금리 3%면 왜 이자가 3%가 아닌가요?","acceptedAnswer":{"@type":"Answer","text":"첫 달 납입금만 12개월치 이자를 받고, 마지막 달 납입금은 1개월치만 받기 때문입니다. 실제 체감 이자율은 표시 금리의 약 54% 수준입니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>예금·적금 이자 계산기</h1>
+  <p class="lead">금리만 보고 좋아하면 안 됩니다. 세금 15.4% 뗀 <strong>세후 진짜 이자</strong>를 확인하세요.</p>
+
+  <form class="calc" id="f">
+    <div class="row2">
+      <div class="field">
+        <label for="type">상품 종류</label>
+        <select id="type">
+          <option value="savings">적금 (매달 납입)</option>
+          <option value="deposit">예금 (목돈 예치)</option>
+          <option value="deposit-c">예금 · 월복리</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="months">기간 <span class="hint">개월</span></label>
+        <select id="months">
+          <option value="6">6개월</option>
+          <option value="12" selected>12개월</option>
+          <option value="24">24개월</option>
+          <option value="36">36개월</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="amount" id="amount-label">매달 넣는 금액 <span class="hint">(원)</span></label>
+      <input id="amount" inputmode="numeric" placeholder="1,000,000" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-v="300000">30만</button>
+        <button type="button" data-v="500000">50만</button>
+        <button type="button" data-v="1000000">100만</button>
+        <button type="button" data-v="10000000">1천만</button>
+        <button type="button" data-v="50000000">5천만</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="rate">연 금리 <span class="hint">%</span></label>
+        <input id="rate" inputmode="decimal" value="3.0" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="tax">과세 방식</label>
+        <select id="tax">
+          <option value="normal">일반과세 (15.4%)</option>
+          <option value="free">비과세</option>
+        </select>
+      </div>
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>이자 명세</h2>
+    <div class="line"><span class="k">원금 합계</span><span class="v" id="o-principal"></span></div>
+    <div class="line"><span class="k">세전 이자</span><span class="v" id="o-interest"></span></div>
+    <div class="line minus"><span class="k">이자소득세 (15.4%)</span><span class="v" id="o-tax"></span></div>
+    <div class="sep"></div>
+    <div class="line"><span class="k">세후 이자</span><span class="v" id="o-net"></span></div>
+    <div class="total"><span class="k">만기 수령액</span><span class="v" id="o-total"></span></div>
+    <div class="foot">약식 계산 · 실제 이자는 은행별 이자 계산 방식(일할 계산 등)에 따라 소액 차이</div>
+  </div>
+
+  <section class="explain">
+    <h2>이자에도 세금이 붙습니다</h2>
+    <p>은행 이자는 <strong>이자소득세 15.4%</strong>(소득세 14% + 지방소득세 1.4%)를 떼고 들어옵니다. 금리 3% 상품이라면 세후 체감 금리는 약 2.54%인 셈입니다.</p>
+    <h2>적금 이자가 생각보다 적은 이유</h2>
+    <p>적금은 매달 넣은 돈에만 이자가 붙습니다. 첫 달 납입금은 12개월치 이자를 받지만, 마지막 달 납입금은 1개월치만 받습니다. 그래서 <strong>12개월 적금의 실제 이자는 표시 금리의 약 절반</strong>입니다. "금리 3% 적금에 월 100만원 = 이자 36만원"이 아니라 19만 5천원인 이유입니다.</p>
+    <h2>예금 vs 적금, 뭐가 유리한가요?</h2>
+    <ul>
+      <li><strong>목돈이 이미 있다</strong> → 예금. 전액에 전 기간 이자가 붙습니다.</li>
+      <li><strong>매달 모으는 중</strong> → 적금. 강제 저축 효과가 있습니다.</li>
+      <li>같은 금액이면 <strong>예금 이자가 적금의 약 2배</strong>입니다. 목돈을 굳이 적금에 쪼개 넣을 이유는 없습니다.</li>
+    </ul>
+  </section>
+
+  <footer>
+    참고용 약식 계산입니다. 실제 이자는 은행의 일할 계산·복리 주기에 따라 달라질 수 있습니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+const amountEl = document.getElementById('amount');
+amountEl.addEventListener('input', () => {
+  const v = num(amountEl.value); amountEl.value = v ? v.toLocaleString('ko-KR') : '';
+});
+document.getElementById('type').addEventListener('change', e => {
+  document.getElementById('amount-label').innerHTML = e.target.value === 'savings'
+    ? '매달 넣는 금액 <span class="hint">(원)</span>'
+    : '맡길 목돈 <span class="hint">(원)</span>';
+});
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  amountEl.value = (+b.dataset.v).toLocaleString('ko-KR');
+  document.getElementById('f').requestSubmit();
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = num(amountEl.value);
+  if (!amount) return;
+  const type = document.getElementById('type').value;
+  const months = +document.getElementById('months').value;
+  const annualRate = (parseFloat(document.getElementById('rate').value) || 0) / 100;
+  const taxFree = document.getElementById('tax').value === 'free';
+  const r = type === 'savings'
+    ? savingsInterest({ monthly: amount, annualRate, months, taxFree })
+    : depositInterest({ principal: amount, annualRate, months, compound: type === 'deposit-c', taxFree });
+  const set = (id, v) => document.getElementById('o-' + id).textContent = fmt(v);
+  set('principal', r.principal ?? amount);
+  set('interest', r.interest); set('tax', r.tax); set('net', r.net); set('total', r.total);
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>
