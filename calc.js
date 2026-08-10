@@ -196,10 +196,29 @@ function hourlyToMonthly({ hourly, weeklyHours, withJuhyu = true }) {
            monthlyHours, monthly, yearly: monthly * 12 };
 }
 
+// 실업급여(구직급여). 상한액은 매년 고용부 고시 확인 필요, 하한 = 최저시급×80%×8h (상한 초과 시 상한으로)
+const UNEMP_DAILY_CAP = 66000;
+
+// 소정급여일수: 이직 시 연령(50세 기준)과 고용보험 가입기간
+function unemploymentDays(age, insuredYears) {
+  const table = age >= 50 ? [120, 180, 210, 240, 270] : [120, 150, 180, 210, 240];
+  const idx = insuredYears < 1 ? 0 : insuredYears < 3 ? 1 : insuredYears < 5 ? 2 : insuredYears < 10 ? 3 : 4;
+  return table[idx];
+}
+
+function unemploymentBenefit({ monthlySalary, age, insuredYears }) {
+  const avgDaily = monthlySalary * 3 / 91.25; // 약식 — severance와 동일 가정
+  const floor = Math.min(UNEMP_DAILY_CAP, Math.round(MIN_WAGE * 0.8 * 8));
+  const daily = Math.round(Math.min(UNEMP_DAILY_CAP, Math.max(floor, avgDaily * 0.6)));
+  const days = unemploymentDays(age, insuredYears);
+  return { daily, days, monthly: daily * 30, total: daily * days };
+}
+
 function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
                      depositInterest, savingsInterest, jeonseToMonthly, loanPayment,
-                     hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee };
+                     hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee,
+                     unemploymentBenefit, unemploymentDays, UNEMP_DAILY_CAP };
 }

@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee, unemploymentBenefit, unemploymentDays, UNEMP_DAILY_CAP } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -135,5 +135,19 @@ assert.strictEqual(brokerFee({ type: 'monthly', deposit: 1e7, monthlyRent: 50000
 
 // 환산액 5천만 미만이면 ×70 재환산: 보증금 500만 + 월세 30만 → 500+2100=2600만 → 0.5% = 13만
 assert.strictEqual(brokerFee({ type: 'monthly', deposit: 5e6, monthlyRent: 300000 }).fee, 130000);
+
+// 실업급여 소정급여일수: 45세/7년 → 210일, 52세/10년 → 270일, 30세/6개월 → 120일
+assert.strictEqual(unemploymentDays(45, 7), 210);
+assert.strictEqual(unemploymentDays(52, 10), 270);
+assert.strictEqual(unemploymentDays(30, 0.5), 120);
+
+// 1일 급여액은 상·하한 사이, 고임금은 상한에 걸림
+const ub = unemploymentBenefit({ monthlySalary: 5000000, age: 40, insuredYears: 5 });
+assert.strictEqual(ub.daily, UNEMP_DAILY_CAP);
+assert.strictEqual(ub.total, ub.daily * ub.days);
+
+// 저임금은 하한(최저시급 80%×8h, 상한 초과 시 상한) 적용 — 음수/0 방지
+const ubLow = unemploymentBenefit({ monthlySalary: 1000000, age: 40, insuredYears: 2 });
+assert.ok(ubLow.daily >= Math.min(UNEMP_DAILY_CAP, Math.round(MIN_WAGE * 0.8 * 8)));
 
 console.log('OK — 전체 테스트 통과');
