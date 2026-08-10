@@ -114,9 +114,31 @@ function jeonseToMonthly({ jeonse, deposit, ratePct }) {
   return { diff, monthly, yearly: monthly * 12 };
 }
 
+// 대출 상환: type = 'equal-payment'(원리금균등) | 'equal-principal'(원금균등) | 'bullet'(만기일시)
+function loanPayment({ principal, annualRate, months, type = 'equal-payment' }) {
+  const r = annualRate / 12;
+  if (type === 'bullet') {
+    const monthly = Math.round(principal * r);
+    return { firstMonthly: monthly, lastMonthly: monthly + principal,
+             totalInterest: monthly * months, totalPaid: principal + monthly * months };
+  }
+  if (type === 'equal-principal') {
+    const base = principal / months;
+    const first = Math.round(base + principal * r);
+    const last = Math.round(base + base * r);
+    const totalInterest = Math.round(principal * r * (months + 1) / 2);
+    return { firstMonthly: first, lastMonthly: last, totalInterest, totalPaid: principal + totalInterest };
+  }
+  // 원리금균등: 금리 0%면 원금/개월수
+  const monthly = r === 0 ? Math.round(principal / months)
+    : Math.round(principal * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1));
+  return { firstMonthly: monthly, lastMonthly: monthly,
+           totalInterest: monthly * months - principal, totalPaid: monthly * months };
+}
+
 function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
-                     depositInterest, savingsInterest, jeonseToMonthly };
+                     depositInterest, savingsInterest, jeonseToMonthly, loanPayment };
 }

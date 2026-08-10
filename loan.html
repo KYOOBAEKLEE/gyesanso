@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대출 상환 계산기 — 원리금균등·원금균등 총이자 비교 | 계산소</title>
+<meta name="description" content="대출 이자 계산기. 원리금균등·원금균등·만기일시 상환 방식별 월 상환액과 총이자를 3초 만에 비교하세요.">
+<meta property="og:title" content="대출 상환 계산기 — 상환 방식별 총이자 비교">
+<meta property="og:description" content="대출금·금리·기간 넣으면 월 상환액과 총이자가 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"원리금균등과 원금균등의 차이는 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"원리금균등은 매달 내는 금액이 똑같고, 원금균등은 처음에 많이 내다가 점점 줄어듭니다. 총이자는 원금균등이 더 적지만 초기 부담이 큽니다."}},
+ {"@type":"Question","name":"1억을 연 4%로 30년 빌리면 이자가 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"원리금균등 기준 월 약 47만 7천원씩 갚고, 30년 총이자는 약 7,200만원입니다. 원금균등이면 총이자가 약 6,000만원으로 줄어듭니다."}},
+ {"@type":"Question","name":"만기일시상환은 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"매달 이자만 내다가 만기에 원금을 한꺼번에 갚는 방식입니다. 매달 부담은 가장 적지만 원금이 줄지 않아 총이자는 가장 많습니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>대출 상환 계산기</h1>
+  <p class="lead">대출금·금리·기간을 넣으면 <strong>월 상환액과 총이자</strong>가 나옵니다. 세 가지 상환 방식을 자동으로 비교해 드립니다.</p>
+
+  <form class="calc" id="f">
+    <div class="field">
+      <label for="principal">대출 금액 <span class="hint">(원)</span></label>
+      <input id="principal" inputmode="numeric" placeholder="100,000,000" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-v="30000000">3천만</button>
+        <button type="button" data-v="50000000">5천만</button>
+        <button type="button" data-v="100000000">1억</button>
+        <button type="button" data-v="300000000">3억</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="rate">연 금리 <span class="hint">%</span></label>
+        <input id="rate" inputmode="decimal" value="4.0" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="years">상환 기간</label>
+        <select id="years">
+          <option value="1">1년</option>
+          <option value="3">3년</option>
+          <option value="5">5년</option>
+          <option value="10">10년</option>
+          <option value="20">20년</option>
+          <option value="30" selected>30년</option>
+          <option value="40">40년</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="type">상환 방식</label>
+      <select id="type">
+        <option value="equal-payment">원리금균등 (매달 같은 금액)</option>
+        <option value="equal-principal">원금균등 (점점 줄어듦)</option>
+        <option value="bullet">만기일시 (이자만 내다 마지막에 원금)</option>
+      </select>
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>상환 명세</h2>
+    <div class="line"><span class="k">첫 달 상환액</span><span class="v" id="o-first"></span></div>
+    <div class="line"><span class="k" id="o-last-k">마지막 달 상환액</span><span class="v" id="o-last"></span></div>
+    <div class="sep"></div>
+    <div class="line minus"><span class="k">총 이자</span><span class="v" id="o-interest"></span></div>
+    <div class="total"><span class="k">총 상환액</span><span class="v" id="o-total"></span></div>
+    <div class="line"><span class="k">다른 방식과 총이자 비교</span><span class="v" id="o-compare"></span></div>
+    <div class="foot">약식 계산 · 실제는 중도상환·금리 변동에 따라 달라짐</div>
+  </div>
+
+  <section class="explain">
+    <h2>상환 방식 3가지, 뭐가 다른가요?</h2>
+    <ul>
+      <li><strong>원리금균등</strong> — 매달 내는 돈이 끝까지 똑같습니다. 월급쟁이가 계획 세우기 가장 편해서 주택담보대출 대부분이 이 방식입니다.</li>
+      <li><strong>원금균등</strong> — 원금을 매달 똑같이 갚고 이자는 남은 원금에만 붙습니다. 처음엔 부담이 크지만 <strong>총이자가 가장 적습니다</strong>.</li>
+      <li><strong>만기일시</strong> — 매달 이자만 내다가 만기에 원금을 한 번에 갚습니다. 월 부담은 최소지만 원금이 안 줄어 <strong>총이자가 가장 많습니다</strong>.</li>
+    </ul>
+    <h2>총이자를 줄이는 현실적인 방법</h2>
+    <ul>
+      <li><strong>기간 단축</strong>이 가장 강력합니다. 1억·4% 기준 30년→20년으로 줄이면 총이자가 약 7,200만원에서 4,500만원대로 줄어듭니다.</li>
+      <li><strong>중도상환</strong> — 여윳돈이 생기면 원금을 미리 갚는 것. 중도상환수수료(보통 대출 후 3년 이내 0.5~1.4%)와 비교해 보고 결정하세요.</li>
+      <li>금리 0.1%p 차이도 30년이면 수백만원입니다. 갈아타기(대환)도 주기적으로 검토할 만합니다.</li>
+    </ul>
+  </section>
+
+  <footer>
+    참고용 약식 계산입니다. 실제 상환액은 은행 상품 조건·금리 변동에 따라 달라집니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+const pEl = document.getElementById('principal');
+pEl.addEventListener('input', () => {
+  const v = num(pEl.value); pEl.value = v ? v.toLocaleString('ko-KR') : '';
+});
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  pEl.value = (+b.dataset.v).toLocaleString('ko-KR');
+  document.getElementById('f').requestSubmit();
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const principal = num(pEl.value);
+  if (!principal) return;
+  const annualRate = (parseFloat(document.getElementById('rate').value) || 0) / 100;
+  const months = +document.getElementById('years').value * 12;
+  const type = document.getElementById('type').value;
+  const r = loanPayment({ principal, annualRate, months, type });
+  document.getElementById('o-first').textContent = fmt(r.firstMonthly);
+  document.getElementById('o-last-k').textContent = type === 'bullet' ? '마지막 달 (원금 포함)' : '마지막 달 상환액';
+  document.getElementById('o-last').textContent = fmt(r.lastMonthly);
+  document.getElementById('o-interest').textContent = fmt(r.totalInterest);
+  document.getElementById('o-total').textContent = fmt(r.totalPaid);
+  const names = { 'equal-payment': '원리금균등', 'equal-principal': '원금균등', 'bullet': '만기일시' };
+  const others = Object.keys(names).filter(t => t !== type)
+    .map(t => `${names[t]} ${fmt(loanPayment({ principal, annualRate, months, type: t }).totalInterest)}`)
+    .join(' · ');
+  document.getElementById('o-compare').textContent = others;
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

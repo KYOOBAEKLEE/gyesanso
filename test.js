@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -59,5 +59,21 @@ assert.strictEqual(j.monthly, 833333);
 
 // 보증금이 전세금보다 크면 월세 0 (음수 방지)
 assert.strictEqual(jeonseToMonthly({ jeonse: 100000000, deposit: 200000000, ratePct: 5 }).monthly, 0);
+
+// 대출: 1억, 연 4%, 30년 원리금균등 → 월 약 477,415원 (시중 계산기 대조값)
+const lp = loanPayment({ principal: 100000000, annualRate: 0.04, months: 360 });
+assert.ok(lp.firstMonthly > 470000 && lp.firstMonthly < 485000, `원리금균등 월납 이상: ${lp.firstMonthly}`);
+
+// 원금균등: 첫 달 최대, 마지막 달 최소, 총이자 = P·r·(n+1)/2
+const lpr = loanPayment({ principal: 100000000, annualRate: 0.04, months: 360, type: 'equal-principal' });
+assert.ok(lpr.firstMonthly > lpr.lastMonthly, '원금균등 첫달>마지막달 위반');
+assert.strictEqual(lpr.totalInterest, Math.round(100000000 * 0.04 / 12 * 361 / 2));
+
+// 총이자 순서: 만기일시 > 원리금균등 > 원금균등
+const lb = loanPayment({ principal: 100000000, annualRate: 0.04, months: 360, type: 'bullet' });
+assert.ok(lb.totalInterest > lp.totalInterest && lp.totalInterest > lpr.totalInterest, '총이자 순서 위반');
+
+// 금리 0% 나눗셈 가드
+assert.strictEqual(loanPayment({ principal: 12000000, annualRate: 0, months: 12 }).firstMonthly, 1000000);
 
 console.log('OK — 전체 테스트 통과');
