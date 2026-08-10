@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>퇴직금 계산기 — 입사일·퇴사일로 바로 계산 | 계산소</title>
+<meta name="description" content="퇴직금 계산기. 입사일, 퇴사일, 월급만 넣으면 예상 퇴직금이 나옵니다. 1년 미만 지급 기준, 평균임금 개념까지 쉽게 설명.">
+<meta property="og:title" content="퇴직금 계산기 — 3초 만에 예상 퇴직금 확인">
+<meta property="og:description" content="입사일·퇴사일·월급으로 예상 퇴직금을 바로 계산하세요.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"퇴직금은 언제 받을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"1년 이상 근무하고 주 15시간 이상 일했다면 받을 수 있습니다. 1년 미만 근무는 법정 퇴직금 지급 대상이 아닙니다."}},
+ {"@type":"Question","name":"퇴직금 계산 공식은 무엇인가요?","acceptedAnswer":{"@type":"Answer","text":"1일 평균임금 × 30일 × (재직일수 ÷ 365)입니다. 평균임금은 퇴직 전 3개월 임금 총액을 그 기간 일수로 나눈 금액입니다."}},
+ {"@type":"Question","name":"상여금도 퇴직금에 포함되나요?","acceptedAnswer":{"@type":"Answer","text":"네. 연간 상여금의 3/12(3개월치 비율)이 평균임금 계산에 포함되어 퇴직금이 늘어납니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>퇴직금 계산기</h1>
+  <p class="lead">입사일·퇴사일·월급만 넣으면 <strong>예상 퇴직금</strong>이 나옵니다. 상여금이 있다면 더 정확해집니다.</p>
+
+  <form class="calc" id="f">
+    <div class="row2">
+      <div class="field">
+        <label for="start">입사일</label>
+        <input id="start" type="date" required>
+      </div>
+      <div class="field">
+        <label for="end">퇴사(예정)일</label>
+        <input id="end" type="date" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="salary">월급 <span class="hint">세전, 최근 3개월 평균 (원)</span></label>
+      <input id="salary" inputmode="numeric" placeholder="3,000,000" autocomplete="off" required>
+    </div>
+    <div class="field">
+      <label for="bonus">연간 상여금 <span class="hint">없으면 비워두세요 (원)</span></label>
+      <input id="bonus" inputmode="numeric" placeholder="0" autocomplete="off">
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>퇴직금 명세</h2>
+    <div class="line"><span class="k">재직 기간</span><span class="v" id="o-days"></span></div>
+    <div class="line"><span class="k">1일 평균임금</span><span class="v" id="o-avg"></span></div>
+    <div class="sep"></div>
+    <div class="total"><span class="k">예상 퇴직금</span><span class="v" id="o-pay"></span></div>
+    <div class="foot" id="o-note">약식 계산 · 실제는 퇴직 전 3개월 달력 일수 기준</div>
+  </div>
+
+  <section class="explain">
+    <h2>퇴직금, 누가 받을 수 있나요?</h2>
+    <p><strong>1년 이상</strong> 근무하고 <strong>주 15시간 이상</strong> 일했다면 정규직·계약직·아르바이트 구분 없이 받을 수 있습니다. 1년에서 하루라도 모자라면 법적으로 지급 의무가 없습니다.</p>
+    <h2>계산 공식</h2>
+    <p><strong>1일 평균임금 × 30일 × (재직일수 ÷ 365)</strong></p>
+    <ul>
+      <li><strong>평균임금</strong> — 퇴직 전 3개월 동안 받은 임금 총액을 그 기간의 일수로 나눈 값. 쉽게 말해 "최근 하루치 몸값"입니다.</li>
+      <li>연간 <strong>상여금</strong>과 <strong>연차수당</strong>은 3/12(3개월 비율)만큼 평균임금에 포함됩니다. 그래서 상여가 있으면 퇴직금이 늘어납니다.</li>
+      <li>1년 일하면 대략 <strong>한 달치 월급</strong>이 퇴직금이라고 기억하면 쉽습니다.</li>
+    </ul>
+    <h2>퇴직금은 언제 지급되나요?</h2>
+    <p>퇴사일로부터 <strong>14일 이내</strong> 지급이 법적 의무입니다. 늦어지면 지연이자(연 20%)가 붙고, 고용노동부에 진정을 넣을 수 있습니다.</p>
+  </section>
+
+  <footer>
+    참고용 약식 계산입니다. 실제 퇴직금은 퇴직 전 3개월 달력 일수·통상임금 비교 등에 따라 달라질 수 있습니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+const comma = el => el.addEventListener('input', () => {
+  const v = num(el.value); el.value = v ? v.toLocaleString('ko-KR') : '';
+});
+comma(document.getElementById('salary'));
+comma(document.getElementById('bonus'));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const r = severance({
+    monthlySalary: num(document.getElementById('salary').value),
+    startDate: document.getElementById('start').value,
+    endDate: document.getElementById('end').value,
+    annualBonus: num(document.getElementById('bonus').value),
+  });
+  const el = id => document.getElementById('o-' + id);
+  const box = document.getElementById('r');
+  if (!r.eligible) {
+    el('days').textContent = r.days + '일';
+    el('avg').textContent = '—';
+    el('pay').textContent = '지급 대상 아님';
+    el('note').textContent = '재직 1년(365일) 미만은 법정 퇴직금 지급 대상이 아닙니다';
+  } else {
+    const y = Math.floor(r.days / 365), d = r.days % 365;
+    el('days').textContent = `${y}년 ${d}일`;
+    el('avg').textContent = fmt(r.avgDaily);
+    el('pay').textContent = fmt(r.pay);
+    el('note').textContent = '약식 계산 · 실제는 퇴직 전 3개월 달력 일수 기준';
+  }
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>
