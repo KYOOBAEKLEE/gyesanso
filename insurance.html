@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4대보험 계산기 (2026) — 근로자·회사 부담 한눈에 | 계산소</title>
+<meta name="description" content="2026년 4대보험 계산기. 월급 기준 국민연금·건강보험·장기요양·고용보험료를 근로자 부담과 회사 부담으로 나눠 보여드립니다.">
+<meta property="og:title" content="4대보험 계산기 (2026)">
+<meta property="og:description" content="월급 넣으면 내 부담·회사 부담 보험료가 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"4대보험 요율은 2026년에 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"근로자 부담 기준 국민연금 4.75%, 건강보험 3.545%, 장기요양보험은 건강보험료의 12.95%, 고용보험 0.9%입니다. 회사도 비슷한 금액을 함께 냅니다."}},
+ {"@type":"Question","name":"4대보험료는 회사가 얼마나 내나요?","acceptedAnswer":{"@type":"Answer","text":"국민연금·건강보험·장기요양은 근로자와 같은 금액을, 고용보험은 근로자보다 조금 더(고용안정·직업능력개발 부담 추가) 냅니다. 산재보험은 회사가 전액 부담합니다."}},
+ {"@type":"Question","name":"산재보험료는 왜 계산에 없나요?","acceptedAnswer":{"@type":"Answer","text":"산재보험은 전액 회사 부담이고 업종에 따라 요율이 0.6%~18%대로 크게 달라, 월급만으로는 계산할 수 없어 제외했습니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>4대보험 계산기</h1>
+  <p class="lead">월급을 넣으면 <strong>내 부담</strong>과 <strong>회사 부담</strong> 보험료가 각각 나옵니다. 2026년 요율 기준.</p>
+
+  <form class="calc" id="f">
+    <div class="field">
+      <label for="monthly">월급 <span class="hint">세전 (원)</span></label>
+      <input id="monthly" inputmode="numeric" placeholder="3,200,000" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-v="2200000">220만</button>
+        <button type="button" data-v="2500000">250만</button>
+        <button type="button" data-v="3000000">300만</button>
+        <button type="button" data-v="4000000">400만</button>
+        <button type="button" data-v="5000000">500만</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="ntx">월 비과세액 <span class="hint">식대 등, 기본 20만</span></label>
+      <input id="ntx" inputmode="numeric" value="200,000" autocomplete="off">
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>보험료 명세</h2>
+    <div class="line"><span class="k">보험료 부과 기준액</span><span class="v" id="o-base"></span></div>
+    <div class="sep"></div>
+    <div class="line minus"><span class="k">국민연금 (4.75%)</span><span class="v" id="o-pension"></span></div>
+    <div class="line minus"><span class="k">건강보험 (3.545%)</span><span class="v" id="o-health"></span></div>
+    <div class="line minus"><span class="k">장기요양보험</span><span class="v" id="o-longCare"></span></div>
+    <div class="line minus"><span class="k">고용보험 (0.9%)</span><span class="v" id="o-employment"></span></div>
+    <div class="total"><span class="k">내 부담 합계</span><span class="v" id="o-worker"></span></div>
+    <div class="sep"></div>
+    <div class="line"><span class="k">회사 부담 합계 <span style="font-size:11px">(산재 별도)</span></span><span class="v" id="o-employer"></span></div>
+    <div class="line"><span class="k">회사+나 총 납부액</span><span class="v" id="o-both"></span></div>
+    <div class="foot">약식 계산 · 산재보험(전액 회사 부담, 업종별 상이)은 제외</div>
+  </div>
+
+  <section class="explain">
+    <h2>4대보험, 각각 뭔가요?</h2>
+    <ul>
+      <li><strong>국민연금</strong> — 노후 연금. 내가 4.75%, 회사가 4.75%를 함께 냅니다. 월급에서 빠져나가는 것 중 유일하게 "돌려받는 저축"에 가깝습니다.</li>
+      <li><strong>건강보험 + 장기요양</strong> — 병원비·요양 서비스. 역시 회사가 같은 금액을 함께 냅니다.</li>
+      <li><strong>고용보험</strong> — 실업급여 재원. 회사는 여기에 고용안정·직업능력개발 부담금을 추가로 냅니다.</li>
+      <li><strong>산재보험</strong> — 일하다 다쳤을 때. <strong>전액 회사 부담</strong>이라 월급에서 안 빠집니다. 업종별로 요율이 크게 달라 이 계산기에선 제외했습니다.</li>
+    </ul>
+    <h2>내가 내는 만큼 회사도 냅니다</h2>
+    <p>월급명세서엔 내 부담분만 보이지만, 실제로는 회사가 거의 같은 금액을 함께 납부합니다. 회사 입장에서 "인건비"는 연봉보다 약 9~10% 더 큰 이유입니다. 프리랜서(3.3%)와 정규직 제안을 비교할 때 이 부분을 놓치면 손해 보는 계산이 됩니다.</p>
+    <h2>세금까지 뺀 실수령액이 궁금하다면</h2>
+    <p>4대보험에 소득세·지방소득세까지 반영한 월 실수령액은 <a href="salary.html"><strong>연봉 실수령액 계산기</strong></a>에서 확인하세요.</p>
+  </section>
+
+  <footer>
+    참고용 약식 계산입니다. 실제 보험료는 보수월액 산정·정산에 따라 달라질 수 있습니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+for (const id of ['monthly', 'ntx']) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    const v = num(el.value); el.value = v ? v.toLocaleString('ko-KR') : '';
+  });
+}
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  document.getElementById('monthly').value = (+b.dataset.v).toLocaleString('ko-KR');
+  document.getElementById('f').requestSubmit();
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const monthly = num(document.getElementById('monthly').value);
+  if (!monthly) return;
+  const r = fourInsurance({ monthly, nonTaxable: num(document.getElementById('ntx').value) });
+  const set = (id, v) => document.getElementById('o-' + id).textContent = fmt(v);
+  set('base', r.base);
+  for (const k of ['pension','health','longCare','employment']) set(k, r.worker[k]);
+  set('worker', r.worker.total);
+  set('employer', r.employer.total);
+  set('both', r.worker.total + r.employer.total);
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

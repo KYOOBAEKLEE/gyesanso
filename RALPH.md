@@ -9,12 +9,12 @@
 - [x] 반복 3: 2026 연봉 실수령액 표(table.html, gen-table.js로 생성 — 요율 변경 시 재실행), sitemap.xml/robots.txt(REPLACE-DOMAIN placeholder), salary↔table 내부링크
 - [x] 반복 4: 대출 상환 계산기(loan.html, 원리금균등/원금균등/만기일시 + 방식별 총이자 비교), sitemap 반영, 테스트 통과
 - [x] 반복 5: 시급 계산기(hourly.html, 주휴수당 비례 계산, 2026 최저시급 10,320원, 고용부 209시간 기준 일치 검증), index/sitemap 반영
+- [x] 반복 6: 4대보험 계산기(insurance.html, 근로자/사업주 부담 분리, 연봉 계산기와 정합성 테스트), index/sitemap 반영
 
 ## 백로그 (다음 반복에서 위에서부터 하나씩)
-1. 4대보험 계산기 단독 페이지 (insurance.html) — "4대보험 계산기" 키워드. netSalary 재사용, 보험료만 보여주기
-2. 각 페이지 상호 내부링크 강화(관련 계산기 푸터 링크), 접근성 점검 (label/aria)
-3. 사용자가 도메인/애드센스 코드 주면: canonical, 애드센스 태그, sitemap/robots 실주소 반영 (REPLACE-DOMAIN 치환)
-4. 백로그 소진 시: 각 페이지 FAQ 확장, 새 계산기 아이디어(중개수수료, 연차수당, 실업급여 등) 검색량 순 추가
+1. 각 페이지 상호 내부링크 강화(하단 "관련 계산기" 링크 블록 공통 추가), 접근성 점검 (label/aria)
+2. 사용자가 도메인/애드센스 코드 주면: canonical, 애드센스 태그, sitemap/robots 실주소 반영 (REPLACE-DOMAIN 치환)
+3. 백로그 소진 시: 각 페이지 FAQ 확장, 새 계산기 아이디어(중개수수료, 연차수당, 실업급여 등) 검색량 순 추가
 
 ## 규칙 (다음 반복의 나에게)
 - 반복당 백로그 1~2개만. 완료하면 이 파일 갱신 + git commit

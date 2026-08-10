@@ -136,6 +136,20 @@ function loanPayment({ principal, annualRate, months, type = 'equal-payment' }) 
            totalInterest: monthly * months - principal, totalPaid: monthly * months };
 }
 
+// 4대보험 (월급 기준, 산재 제외 — 업종별 상이). 사업주 고용보험 = 실업급여 0.9% + 고용안정·직능 0.25%(150인 미만)
+function fourInsurance({ monthly, nonTaxable = 200000 }) {
+  const base = Math.max(0, monthly - nonTaxable);
+  const pension = Math.round(Math.min(base, RATES.pensionCapMonthly) * RATES.pension);
+  const health = Math.round(base * RATES.health);
+  const longCare = Math.round(health * RATES.longCare);
+  const employment = Math.round(base * RATES.employment);
+  const employerEmployment = Math.round(base * (RATES.employment + 0.0025));
+  const worker = { pension, health, longCare, employment, total: pension + health + longCare + employment };
+  const employer = { pension, health, longCare, employment: employerEmployment,
+                     total: pension + health + longCare + employerEmployment };
+  return { base, worker, employer };
+}
+
 const MIN_WAGE = 10320; // 2026년 최저시급
 
 // 시급 → 월급. 주휴수당: 주 15시간 이상 개근 시 (주근로/40, 최대 1)×8시간 유급
@@ -154,5 +168,5 @@ function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
                      depositInterest, savingsInterest, jeonseToMonthly, loanPayment,
-                     hourlyToMonthly, MIN_WAGE };
+                     hourlyToMonthly, MIN_WAGE, fourInsurance };
 }

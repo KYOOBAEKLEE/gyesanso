@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -90,5 +90,23 @@ assert.strictEqual(hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 20 }).juhyuH
 
 // 주휴 제외 옵션이 포함보다 적다
 assert.ok(hourlyToMonthly({ hourly: MIN_WAGE, weeklyHours: 40, withJuhyu: false }).monthly < h.monthly);
+
+// 4대보험: 월 320만(비과세 20만 → 과세 300만) 근로자 부담 검증
+const fi = fourInsurance({ monthly: 3200000 });
+assert.strictEqual(fi.worker.pension, 142500);   // 300만 × 4.75%
+assert.strictEqual(fi.worker.health, 106350);    // 300만 × 3.545%
+assert.strictEqual(fi.worker.employment, 27000); // 300만 × 0.9%
+assert.strictEqual(fi.worker.total, fi.worker.pension + fi.worker.health + fi.worker.longCare + fi.worker.employment);
+
+// 사업주 부담이 근로자보다 크다 (고용안정·직능 0.25%p 추가)
+assert.ok(fi.employer.total > fi.worker.total);
+
+// 연봉 계산기와 정합: 같은 과세 기준이면 보험료 동일
+const ns = netSalary(38400000); // 월 320만 연봉, 비과세 월 20만
+assert.strictEqual(fi.worker.pension, ns.pension);
+assert.strictEqual(fi.worker.health, ns.health);
+
+// 비과세보다 적은 월급 → 0원, 음수 없음
+assert.strictEqual(fourInsurance({ monthly: 100000 }).worker.total, 0);
 
 console.log('OK — 전체 테스트 통과');
