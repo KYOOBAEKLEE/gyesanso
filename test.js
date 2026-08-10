@@ -1,6 +1,6 @@
 // node test.js — 계산 로직 자가 검증
 const assert = require('assert');
-const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc } = require('./calc.js');
+const { netSalary, severance, earnedIncomeDeduction, depositInterest, savingsInterest, jeonseToMonthly, loanPayment, hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee } = require('./calc.js');
 
 // 연봉 5,000만 / 1인 / 비과세 월 20만 → 시중 계산기 기준 월 실수령 약 350~360만
 const r = netSalary(50000000);
@@ -121,5 +121,19 @@ assert.strictEqual(annualLeaveDays(0.5), null);
 const al = annualLeavePayCalc({ monthlySalary: 3000000, unusedDays: 5 });
 assert.ok(al.daily > 110000 && al.daily < 120000, `일 통상임금 이상: ${al.daily}`);
 assert.strictEqual(al.total, al.daily * 5);
+
+// 중개수수료: 매매 3억 → 0.4% = 120만, 전세 3억 → 0.3% = 90만
+assert.strictEqual(brokerFee({ type: 'sale', price: 3e8 }).fee, 1200000);
+assert.strictEqual(brokerFee({ type: 'jeonse', deposit: 3e8 }).fee, 900000);
+
+// 한도액: 매매 1억 → 0.5% = 50만 (한도 80만 미달이라 그대로), 매매 4900만 → 0.6%이지만 한도 25만
+assert.strictEqual(brokerFee({ type: 'sale', price: 1e8 }).fee, 500000);
+assert.strictEqual(brokerFee({ type: 'sale', price: 49000000 }).fee, 250000);
+
+// 월세 환산: 보증금 1000만 + 월세 50만 → 1000만+5000만=6000만 → 0.3%… 아니 1억 미만 0.4% 한도 30만 → 24만
+assert.strictEqual(brokerFee({ type: 'monthly', deposit: 1e7, monthlyRent: 500000 }).fee, 240000);
+
+// 환산액 5천만 미만이면 ×70 재환산: 보증금 500만 + 월세 30만 → 500+2100=2600만 → 0.5% = 13만
+assert.strictEqual(brokerFee({ type: 'monthly', deposit: 5e6, monthlyRent: 300000 }).fee, 130000);
 
 console.log('OK — 전체 테스트 통과');

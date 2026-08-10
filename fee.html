@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부동산 중개수수료 계산기 — 매매·전세·월세 복비 상한 | 계산소</title>
+<meta name="description" content="부동산 중개수수료(복비) 계산기. 매매·전세·월세 거래금액별 법정 상한요율로 최대 중개보수를 3초 만에 확인하세요.">
+<meta property="og:title" content="부동산 중개수수료 계산기 — 복비 상한 확인">
+<meta property="og:description" content="매매가·보증금 넣으면 법정 최대 복비가 나옵니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=IBM+Plex+Sans+KR:wght@400;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='8' y='8' width='84' height='84' rx='16' fill='none' stroke='%23b3382c' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23b3382c' font-family='serif' font-weight='900'>計</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+ {"@type":"Question","name":"부동산 중개수수료는 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"거래 종류와 금액에 따라 법정 상한요율이 다릅니다. 예를 들어 3억원 아파트 매매는 최대 0.4%인 120만원, 3억원 전세는 최대 0.3%인 90만원입니다."}},
+ {"@type":"Question","name":"복비는 깎을 수 있나요?","acceptedAnswer":{"@type":"Answer","text":"네. 법으로 정해진 것은 상한(최대치)이고, 실제 수수료는 그 범위 안에서 중개사와 협의해 정하는 것입니다. 계약 전에 미리 협의하는 것이 관행입니다."}},
+ {"@type":"Question","name":"월세 중개수수료는 어떻게 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"보증금 + (월세 × 100)을 거래금액으로 환산해 요율을 적용합니다. 이 금액이 5천만원 미만이면 월세 × 70으로 다시 환산합니다."}}]}
+</script>
+<!-- AdSense: 승인 후 스크립트 삽입 (DEPLOY.md 4번) -->
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="stamp-logo" href="./">計</a>
+    <a class="brand" href="./">계산소<small>GYESANSO · 生活計算</small></a>
+  </header>
+
+  <h1>중개수수료 계산기</h1>
+  <p class="lead">매매가나 보증금을 넣으면 법정 <strong>최대 중개보수(복비)</strong>가 나옵니다. 이보다 많이 달라고 하면 깎을 근거가 됩니다.</p>
+
+  <form class="calc" id="f">
+    <div class="field">
+      <label for="type">거래 종류</label>
+      <select id="type">
+        <option value="sale">매매</option>
+        <option value="jeonse">전세</option>
+        <option value="monthly">월세</option>
+      </select>
+    </div>
+    <div class="field" id="price-field">
+      <label for="price">매매가 <span class="hint">(원)</span></label>
+      <input id="price" inputmode="numeric" placeholder="300,000,000" autocomplete="off">
+      <div class="quick">
+        <button type="button" data-v="100000000">1억</button>
+        <button type="button" data-v="300000000">3억</button>
+        <button type="button" data-v="500000000">5억</button>
+        <button type="button" data-v="900000000">9억</button>
+      </div>
+    </div>
+    <div class="field" id="rent-field" style="display:none">
+      <label for="rent">월세 <span class="hint">(원)</span></label>
+      <input id="rent" inputmode="numeric" placeholder="500,000" autocomplete="off">
+    </div>
+    <button class="go" type="submit">계 산 하 기</button>
+  </form>
+
+  <div class="receipt" id="r" aria-live="polite">
+    <div class="stamp-mark">계산<br>완료</div>
+    <h2>중개보수 명세</h2>
+    <div class="line"><span class="k">거래금액 (환산)</span><span class="v" id="o-amount"></span></div>
+    <div class="line"><span class="k">상한 요율</span><span class="v" id="o-rate"></span></div>
+    <div class="sep"></div>
+    <div class="total"><span class="k">최대 중개보수</span><span class="v" id="o-fee"></span></div>
+    <div class="line"><span class="k">부가세 10% 포함 시</span><span class="v" id="o-vat"></span></div>
+    <div class="foot">주택 기준 · 이 금액은 "상한"이며 협의로 낮출 수 있음</div>
+  </div>
+
+  <section class="explain">
+    <h2>복비는 "상한"만 정해져 있습니다</h2>
+    <p>법이 정한 것은 <strong>최대치</strong>입니다. 그 안에서 얼마를 낼지는 중개사와 <strong>협의</strong>로 정합니다. 계약서에 도장 찍기 전에 미리 이야기하는 게 관행이고, 상한을 넘겨 받는 것은 불법입니다.</p>
+    <h2>거래금액별 상한요율 (주택)</h2>
+    <ul>
+      <li><strong>매매</strong> — 5천만 미만 0.6%(한도 25만) · ~2억 0.5%(한도 80만) · ~9억 0.4% · ~12억 0.5% · ~15억 0.6% · 15억 이상 0.7%</li>
+      <li><strong>전·월세</strong> — 5천만 미만 0.5%(한도 20만) · ~1억 0.4%(한도 30만) · ~6억 0.3% · ~12억 0.4% · ~15억 0.5% · 15억 이상 0.6%</li>
+      <li><strong>월세 환산</strong> — 보증금 + 월세×100. 이 값이 5천만 미만이면 월세×70으로 재환산합니다.</li>
+    </ul>
+    <h2>부가세는 별도입니다</h2>
+    <p>중개보수에는 부가가치세 10%가 별도로 붙을 수 있습니다(중개사가 일반과세자인 경우). 간이과세자라면 4%입니다. 현금영수증 발급은 의무이니 꼭 챙기세요.</p>
+  </section>
+
+  <nav class="related" aria-label="관련 계산기">
+    <h2>이것도 계산해 보세요</h2>
+    <a href="jeonse.html">전월세 전환 계산기</a>
+    <a href="loan.html">대출 상환 계산기</a>
+    <a href="interest.html">예금·적금 이자 계산기</a>
+  </nav>
+
+  <footer>
+    주택(아파트·빌라 등) 기준이며 오피스텔·상가는 요율이 다릅니다. 지자체 조례에 따라 일부 차이가 있을 수 있습니다.
+    <a href="./">← 다른 계산기 보기</a>
+  </footer>
+</div>
+
+<script src="calc.js"></script>
+<script>
+const num = s => parseInt(String(s).replace(/[^0-9]/g, ''), 10) || 0;
+const fmt = n => n.toLocaleString('ko-KR') + '원';
+for (const id of ['price', 'rent']) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    const v = num(el.value); el.value = v ? v.toLocaleString('ko-KR') : '';
+  });
+}
+const typeEl = document.getElementById('type');
+typeEl.addEventListener('change', () => {
+  const t = typeEl.value;
+  document.querySelector('#price-field label').innerHTML =
+    (t === 'sale' ? '매매가' : '보증금') + ' <span class="hint">(원)</span>';
+  document.getElementById('rent-field').style.display = t === 'monthly' ? '' : 'none';
+});
+document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+  document.getElementById('price').value = (+b.dataset.v).toLocaleString('ko-KR');
+  document.getElementById('f').requestSubmit();
+}));
+document.getElementById('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const t = typeEl.value;
+  const v = num(document.getElementById('price').value);
+  if (!v) return;
+  const r = brokerFee(t === 'sale'
+    ? { type: t, price: v }
+    : { type: t, deposit: v, monthlyRent: num(document.getElementById('rent').value) });
+  document.getElementById('o-amount').textContent = fmt(r.amount);
+  document.getElementById('o-rate').textContent = (r.rate * 100).toFixed(1) + '%';
+  document.getElementById('o-fee').textContent = fmt(r.fee);
+  document.getElementById('o-vat').textContent = fmt(Math.round(r.fee * 1.1));
+  document.getElementById('r').classList.add('show');
+  document.getElementById('r').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>

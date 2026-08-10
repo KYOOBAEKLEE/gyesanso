@@ -163,6 +163,26 @@ function annualLeavePayCalc({ monthlySalary, unusedDays }) {
   return { daily, total: daily * unusedDays };
 }
 
+// 주택 중개보수 상한요율 (2021.10 개정 공인중개사법 시행규칙 기준): [거래금액 미만, 요율, 한도액]
+const BROKER_RATES = {
+  sale: [[5e7, 0.006, 250000], [2e8, 0.005, 800000], [9e8, 0.004, null],
+         [12e8, 0.005, null], [15e8, 0.006, null], [Infinity, 0.007, null]],
+  rent: [[5e7, 0.005, 200000], [1e8, 0.004, 300000], [6e8, 0.003, null],
+         [12e8, 0.004, null], [15e8, 0.005, null], [Infinity, 0.006, null]],
+};
+
+// 중개보수 상한. 월세는 보증금 + 월세×100 환산 (환산액 5천만 미만이면 ×70)
+function brokerFee({ type, price = 0, deposit = 0, monthlyRent = 0 }) {
+  let amount = type === 'sale' ? price : deposit + monthlyRent * 100;
+  if (type !== 'sale' && amount < 5e7) amount = deposit + monthlyRent * 70;
+  for (const [cap, rate, limit] of BROKER_RATES[type === 'sale' ? 'sale' : 'rent']) {
+    if (amount < cap) {
+      const fee = Math.min(Math.round(amount * rate), limit ?? Infinity);
+      return { amount, rate, fee };
+    }
+  }
+}
+
 const MIN_WAGE = 10320; // 2026년 최저시급
 
 // 시급 → 월급. 주휴수당: 주 15시간 이상 개근 시 (주근로/40, 최대 1)×8시간 유급
@@ -181,5 +201,5 @@ function won(n) { return n.toLocaleString('ko-KR') + '원'; }
 if (typeof module !== 'undefined') {
   module.exports = { RATES, netSalary, severance, earnedIncomeDeduction, progressiveTax, taxCreditCap,
                      depositInterest, savingsInterest, jeonseToMonthly, loanPayment,
-                     hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc };
+                     hourlyToMonthly, MIN_WAGE, fourInsurance, annualLeaveDays, annualLeavePayCalc, brokerFee };
 }
