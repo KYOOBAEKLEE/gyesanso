@@ -1,5 +1,18 @@
 # 배포 & 수익화 체크리스트 (사장님 할 일)
 
+## 진행 상황 (2026-08-12 기준)
+- [x] 1. GitHub Pages 배포 → https://kyoobaeklee.github.io/gyesanso/
+- [x] 3-구글. 서치콘솔 등록 + 소유 확인(HTML 파일) + sitemap.xml 제출 완료
+- [ ] 3-네이버. 서치어드바이저 등록 — 아래 "네이버 등록 방법" 참고
+- [ ] 4. 애드센스 신청
+
+## 네이버 등록 방법 (10분)
+1. searchadvisor.naver.com 접속 → 네이버 로그인 → "웹마스터 도구"
+2. 사이트 등록: `https://kyoobaeklee.github.io/gyesanso` 입력
+3. 소유 확인에서 "HTML 파일 업로드" 선택 → 파일명과 내용이 나오면 **그대로 복사해서 Claude에게 전달**
+   (Claude가 파일을 만들어 배포하고, 그 후 "소유확인" 버튼만 누르면 됨)
+4. 확인 완료 후: 요청 → 사이트맵 제출 → `https://kyoobaeklee.github.io/gyesanso/sitemap.xml`
+
 코드는 완성돼 있습니다. 아래는 **계정이 필요해서 제가 대신 못 하는 것**들입니다.
 위에서부터 순서대로 하면 됩니다. 총 소요: 첫날 1~2시간, 이후 방치.
 
