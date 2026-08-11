@@ -1,16 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 배포 후 REPLACE-DOMAIN을 실제 주소로 교체 (예: mano.github.io/gyesanso) — DEPLOY.md 참고 -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://REPLACE-DOMAIN/</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/salary.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/table.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/severance.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/interest.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/jeonse.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/loan.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/hourly.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/insurance.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/annual-leave.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/fee.html</loc></url>
-  <url><loc>https://REPLACE-DOMAIN/unemployment.html</loc></url>
+<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/salary.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/table.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/severance.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/interest.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/jeonse.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/loan.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/hourly.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/insurance.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/annual-leave.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/fee.html</loc></url>
+  <url><loc>https://kyoobaeklee.github.io/gyesanso/unemployment.html</loc></url>
 </urlset>
